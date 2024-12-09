@@ -44,6 +44,9 @@ func NewClient(config Config) *Client {
 		config: &Config{
 			BeforeFunc: config.BeforeFunc,
 			AfterFunc:  config.AfterFunc,
+			RetryTimes: config.RetryTimes,
+			Logger:     config.Logger,
+			ProxyUrl:   config.ProxyUrl,
 		},
 	}
 	if client.config.AfterFunc == nil {

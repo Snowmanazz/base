@@ -164,7 +164,8 @@ func (r *Request) Do() *Response {
 		}
 
 		if resp.StatusCode != http.StatusOK {
-			resp.err = fmt.Errorf("请求失败, response code: %d, response body: %s", resp.StatusCode, resp.Status)
+			bts, _ := io.ReadAll(resp.Body)
+			resp.err = fmt.Errorf("请求失败, response code: %d, response body: %s", resp.StatusCode, string(bts))
 			time.Sleep(time.Second)
 			continue
 		}

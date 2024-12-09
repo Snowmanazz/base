@@ -162,6 +162,13 @@ func (r *Request) Do() *Response {
 			time.Sleep(time.Second)
 			continue
 		}
+
+		if resp.StatusCode != http.StatusOK {
+			resp.err = fmt.Errorf("请求失败, response code: %d, response body: %s", resp.StatusCode, resp.Status)
+			time.Sleep(time.Second)
+			continue
+		}
+
 		break
 	}
 
@@ -170,7 +177,7 @@ func (r *Request) Do() *Response {
 		success = 1
 	}
 
-	r.logger.Info("%s[%s] 请求完成，请求失败%d次，成功%d次\n耗时：",
+	r.logger.Info("%s[%s] 请求完成，请求失败%d次，成功%d次。耗时：%s",
 		r.Name, id, i, success, strings.Join(reqTime, ","))
 
 	if resp.err != nil {

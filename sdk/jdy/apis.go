@@ -24,3 +24,15 @@ func (j *JdyClient) DataBatchAdd(param DataBatchAddParam) (res DataBatchAddRespo
 	err = j.generateReq(BatchAddUrlSuffix).SetBody(param).Do().BindJson(&res)
 	return
 }
+
+// 获取数据
+func (j *JdyClient) DataGet(param DataGetParam) (res map[string]any, err error) {
+	err = j.generateReq(GetUrlSuffix).SetBody(param).Do().BindJson(&res)
+	return
+}
+
+// 获取多少数据
+func (j *JdyClient) DataList(param DataListParam) (res []map[string]any, err error) {
+	err = j.generateReq(ListUrlSuffix).SetBody(param).Do().BindJson(&res)
+	return
+}

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"io"
 	"net/http"
@@ -143,9 +142,8 @@ func (r *Request) Do() *Response {
 		return resp
 	}
 
-	id := uuid.New().String()
 	if r.debug {
-		r.printCurlLog(id, req)
+		r.printCurlLog(req)
 	}
 
 	//发送请求
@@ -166,8 +164,6 @@ func (r *Request) Do() *Response {
 		if resp.StatusCode != http.StatusOK {
 			bts, _ := io.ReadAll(resp.Body)
 			resp.err = fmt.Errorf("请求失败, response code: %d, response body: %s", resp.StatusCode, string(bts))
-			time.Sleep(time.Second)
-			continue
 		}
 
 		break
@@ -178,8 +174,8 @@ func (r *Request) Do() *Response {
 		success = 1
 	}
 
-	r.logger.Info("%s[%s] 请求完成，请求失败%d次，成功%d次。耗时：%s",
-		r.Name, id, i, success, strings.Join(reqTime, ","))
+	r.logger.Info("【%s】 请求完成，请求失败%d次，成功%d次。耗时：%s",
+		r.Name, i, success, strings.Join(reqTime, ","))
 
 	if resp.err != nil {
 		resp.err = errors.WithStack(resp.err)
@@ -203,7 +199,7 @@ func (r *Request) SetBody(body any) *Request {
 }
 
 // printCurlLog 输出请求日志
-func (r *Request) printCurlLog(id string, req *http.Request) {
+func (r *Request) printCurlLog(req *http.Request) {
 	var body = bytes.NewBufferString("")
 	if req.Body != nil {
 		_, _ = io.Copy(body, req.Body)
@@ -211,7 +207,7 @@ func (r *Request) printCurlLog(id string, req *http.Request) {
 
 	builder := strings.Builder{}
 
-	builder.WriteString(fmt.Sprintf("%s[%s] request-detail：\n", r.Name, id))
+	builder.WriteString(fmt.Sprintf("[%s] request-detail：\n", r.Name))
 	builder.WriteString(fmt.Sprintf("curl -X %s    '%s' \\\n", req.Method, req.URL.String()))
 
 	for k, v := range req.Header {

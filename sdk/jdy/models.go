@@ -33,3 +33,26 @@ type DataBatchAddResponse struct {
 	SuccessCount int      `json:"success_count"`
 	SuccessIds   []string `json:"success_ids"`
 }
+
+type DataGetParam struct {
+	Model
+	DataId string `json:"data_id"`
+}
+
+type DataListParam struct {
+	Model
+	DataId string         `json:"data_id"`
+	Limit  int            `json:"limit"`
+	Fields []string       `json:"fields"`
+	Filter DataListFilter `json:"filter"`
+}
+type DataListFilter struct {
+	Rel  string               `json:"rel"`
+	Cond []DataListFilterCond `json:"cond"`
+}
+type DataListFilterCond struct {
+	Field  string `json:"field"`
+	Type   string `json:"type"`
+	Method string `json:"method"`
+	Value  []any  `json:"value,omitempty"`
+}

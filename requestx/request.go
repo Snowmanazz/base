@@ -150,9 +150,13 @@ func (r *Request) Do() *Response {
 
 	//发送请求
 	var i int
+	reqTime := make([]string, 0)
 	for i = 0; i < r.retryTimes; i++ {
+		now := time.Now()
 
 		resp.Response, resp.err = r.client.Do(req)
+
+		reqTime = append(reqTime, time.Since(now).String())
 
 		if resp.err != nil {
 			time.Sleep(time.Second)
@@ -166,7 +170,8 @@ func (r *Request) Do() *Response {
 		success = 1
 	}
 
-	r.logger.Info("%s[%s] 请求完成，请求失败%d次，成功%d次\n", r.Name, id, i, success)
+	r.logger.Info("%s[%s] 请求完成，请求失败%d次，成功%d次\n耗时：",
+		r.Name, id, i, success, strings.Join(reqTime, ","))
 
 	if resp.err != nil {
 		resp.err = errors.WithStack(resp.err)
